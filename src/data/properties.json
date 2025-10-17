@@ -1,0 +1,32 @@
+[
+  {
+    "id": "peden-gardens",
+    "name": "Peden Gardens",
+    "status": "UNDER CONSTRUCTION",
+    "neighborhood": "Montrose",
+    "beds": 3,
+    "baths": 3.5,
+    "sqft": "3124–3153",
+    "price": 799000,
+    "unitsLeft": 2,
+    "lat": 29.7475,
+    "lng": -95.3943,
+    "img": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=1200&auto=format&fit=crop",
+    "url": "/property/peden-gardens"
+  },
+  {
+    "id": "huldy-place",
+    "name": "Huldy Place",
+    "status": "UNDER CONSTRUCTION",
+    "neighborhood": "River Oaks",
+    "beds": 4,
+    "baths": 3.5,
+    "sqft": "3108–3110",
+    "price": 899000,
+    "unitsLeft": 1,
+    "lat": 29.7446,
+    "lng": -95.4307,
+    "img": "https://images.unsplash.com/photo-1560185008-b033106af5e4?q=80&w=1200&auto=format&fit=crop",
+    "url": "/property/huldy-place"
+  }
+]
