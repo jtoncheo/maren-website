@@ -1,5 +1,6 @@
 {
   "name": "maren-website",
+  "homepage":"https://jtoncheo.github.io/maren-website",
   "version": "1.0.0",
   "private": true,
   "scripts": {
