@@ -31,8 +31,8 @@ function Header() {
         <Link to="/">Home</Link>
         <Link to="/about">About</Link>
         <a href="/available-homes">Available Homes</a>
-        <a href="#">Past Projects</a>
-        <a href="#">Contact</a>
+        <a href="/past-projects">Past Projects</a>
+        <a href="/contact">Contact</a>
       </nav>
     </header>
   );

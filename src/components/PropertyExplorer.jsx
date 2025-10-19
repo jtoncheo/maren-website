@@ -132,7 +132,9 @@ export default function PropertyExplorer() {
                     <div style={{ fontSize: 12 }}>
                       <div style={{ fontWeight: 600 }}>{p.name}</div>
                       <div style={{ opacity: 0.8 }}>{p.neighborhood}</div>
-                      <div style={{ opacity: 0.7, marginTop: 4 }}>from {$$(p.price)}</div>
+                      <div style={{ marginTop: 4 }}>FROM {$$(p.price)}</div>
+                      <Spec icon={<IconBed />} label={`${p.beds} BEDS`} />
+                      <Spec icon={<IconBath />} label={`${p.baths} BATHS`} />
                     </div>
                   </Tooltip>
                 </CircleMarker>
