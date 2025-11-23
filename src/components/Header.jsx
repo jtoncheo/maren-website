@@ -32,7 +32,7 @@ function Header() {
         <Link to="/about">About</Link>
         <Link to="/available-homes">Available Homes</Link>
         <Link to="/past-projects">Past Projects</Link>
-        <a ref="/contact">Contact</a>
+        <Link to="/contact">Contact</Link>
       </nav>
     </header>
   );
