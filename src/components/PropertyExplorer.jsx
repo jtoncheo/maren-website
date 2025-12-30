@@ -1,81 +1,60 @@
-import React, { useMemo, useRef, useState, useEffect } from "react";
-import { MapContainer, TileLayer, CircleMarker, Tooltip, useMap } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
+// src/components/PropertyExplorer.jsx
+import React, { useState, useMemo } from "react";
+import { GoogleMap, LoadScript, Marker, InfoWindow } from "@react-google-maps/api";
 import propertiesJson from "../data/properties.json";
+import logo from "../assets/images/jmaren.png";
 
-const HEADER_OFFSET_PX = 80; // match your header height
-
-// inline icons
-const IconBed = (p) => (
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" {...p}>
-    <path d="M3 18v-6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v6" />
-    <path d="M3 14h18" />
-  </svg>
-);
-const IconBath = (p) => (
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" {...p}>
-    <path d="M3 13h18" />
-    <path d="M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5" />
-  </svg>
-);
-const IconRuler = (p) => (
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" {...p}>
-    <rect x="3" y="7" width="18" height="10" rx="2" />
-  </svg>
-);
-
-// ✅ FIXED: const (not cont) and no loading state needed for imported JSON
-const [properties] = React.useState ? [] : []; // placeholder to please linters
-// 👆 ignore that; actual state is defined inside the component below
+const HEADER_OFFSET_PX = 80;
 
 const $$ = (n) =>
   new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
 
-function FlyTo({ center }) {
-  const map = useMap();
-  useEffect(() => {
-    if (center) map.flyTo(center, map.getZoom(), { duration: 0.5 });
-  }, [center, map]);
-  return null;
-}
-
 export default function PropertyExplorer() {
-  // ✅ use imported JSON as initial, no loading needed
-  const [properties] = React.useState(propertiesJson);
-
+  const [properties] = useState(propertiesJson);
   const [hoveredId, setHoveredId] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
 
-  const selected = useMemo(
-    () => properties.find((p) => p.id === selectedId) || null,
-    [selectedId, properties]
-  );
-  const hovered = useMemo(
-    () => properties.find((p) => p.id === hoveredId) || null,
-    [hoveredId, properties]
-  );
+  const selected = useMemo(() => properties.find((p) => p.id === selectedId) || null, [selectedId, properties]);
+  const hovered = useMemo(() => properties.find((p) => p.id === hoveredId) || null, [hoveredId, properties]);
   const focus = hovered ?? selected ?? null;
 
   const containerStyle = {
-    marginTop: HEADER_OFFSET_PX,
-    height: `calc(100vh - ${HEADER_OFFSET_PX}px)`,
+    paddingTop: HEADER_OFFSET_PX, // space for fixed header
+    height: `100vh`,
     display: "flex",
     background: "#f9f1e4",
     color: "#333",
+    boxSizing: "border-box",
   };
+
   const leftStyle = {
     width: 420,
     minWidth: 320,
     maxWidth: 520,
     borderRight: "1px solid #e5ded1",
     background: "#ffffff",
+    paddingTop: 12, // optional spacing
+    height: `calc(100vh - ${HEADER_OFFSET_PX}px)`, // fits exactly under header
+    overflowY: "auto", // keeps scrolling inside sidebar
   };
   const listStyle = { height: "100%", overflowY: "auto", padding: 16, display: "grid", gap: 16 };
   const mapStyle = { flex: 1, minWidth: 0, height: "100%" };
 
+  const mapContainerStyle = { width: "100%", height: "100%" };
+
+  // Safe icon creator using window.google after API loads
+  const getMarkerIcon = (isActive) =>
+    window.google
+      ? {
+          url: logo,
+          scaledSize: new window.google.maps.Size(isActive ? 50 : 40, isActive ? 50 : 40),
+          anchor: new window.google.maps.Point(isActive ? 25 : 20, isActive ? 25 : 20),
+        }
+      : null;
+
   return (
     <div style={containerStyle}>
-      {/* LEFT: cards */}
+      {/* LEFT: Property cards */}
       <aside style={leftStyle}>
         <div style={{ padding: 12, display: "flex", gap: 12 }}>
           <FakeSelect label="All Current Projects" />
@@ -99,69 +78,48 @@ export default function PropertyExplorer() {
         </div>
       </aside>
 
-      {/* RIGHT: map */}
+      {/* RIGHT: Google Map */}
       <section style={mapStyle}>
-        {properties.length > 0 ? (
-          <MapContainer center={[29.76, -95.37]} zoom={12} scrollWheelZoom style={{ height: "100%", width: "100%" }}>
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution="&copy; OpenStreetMap contributors"
-            />
-
-            {focus && <FlyTo center={[focus.lat, focus.lng]} />}
-
+        <LoadScript googleMapsApiKey="AIzaSyABhHg6DvTFNv_gmyVBCTw49MTYR4cmqow">
+          <GoogleMap
+            mapContainerStyle={mapContainerStyle}
+            center={focus ? { lat: focus.lat, lng: focus.lng } : { lat: 29.76, lng: -95.37 }}
+            zoom={12}
+          >
             {properties.map((p) => {
               const isActive = p.id === (hoveredId ?? selectedId);
               return (
-                <CircleMarker
+                <Marker
                   key={p.id}
-                  center={[p.lat, p.lng]}
-                  radius={isActive ? 12 : 8}
-                  pathOptions={{
-                    color: isActive ? "#d9a441" : "#8aa3b0",
-                    weight: isActive ? 3 : 1.5,
-                    opacity: 0.95,
-                  }}
-                  eventHandlers={{
-                    mouseover: () => setHoveredId(p.id),
-                    mouseout: () => setHoveredId(null),
-                    click: () => setSelectedId(p.id),
-                  }}
-                >
-                  <Tooltip>
-                    <div style={{ fontSize: 12 }}>
-                      <div style={{ fontWeight: 600 }}>{p.name}</div>
-                      <div style={{ opacity: 0.8 }}>{p.neighborhood}</div>
-                      <div style={{ marginTop: 4 }}>FROM {$$(p.price)}</div>
-                      <Spec icon={<IconBed />} label={`${p.beds} BEDS`} />
-                      <Spec icon={<IconBath />} label={`${p.baths} BATHS`} />
-                    </div>
-                  </Tooltip>
-                </CircleMarker>
+                  position={{ lat: p.lat, lng: p.lng }}
+                  onMouseOver={() => setHoveredId(p.id)}
+                  onMouseOut={() => setHoveredId(null)}
+                  onClick={() => setSelectedId(p.id)}
+                  icon={getMarkerIcon(isActive)}
+                />
               );
             })}
-          </MapContainer>
-        ) : (
-          <div
-            style={{
-              height: "100%",
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#777",
-              fontSize: 14,
-            }}
-          >
-            No map data available
-          </div>
-        )}
+
+            {selected && (
+              <InfoWindow
+                position={{ lat: selected.lat, lng: selected.lng }}
+                onCloseClick={() => setSelectedId(null)}
+              >
+                <div style={{ fontSize: 12 }}>
+                  <div style={{ fontWeight: 600 }}>{selected.name}</div>
+                  <div style={{ opacity: 0.8 }}>{selected.neighborhood}</div>
+                  <div style={{ marginTop: 4 }}>FROM {$$(selected.price)}</div>
+                </div>
+              </InfoWindow>
+            )}
+          </GoogleMap>
+        </LoadScript>
       </section>
     </div>
   );
 }
 
-/* helpers */
+/* Helper components */
 function FakeSelect({ label }) {
   return (
     <div style={{ flex: 1 }}>
@@ -253,9 +211,9 @@ function Card({ p, active, ...events }) {
             color: "#444",
           }}
         >
-          <Spec icon={<IconBed />} label={`${p.beds} BEDS`} />
-          <Spec icon={<IconBath />} label={`${p.baths} BATHS`} />
-          <Spec icon={<IconRuler />} label={`${p.sqft} SQ.FT.`} />
+          <Spec icon="🛏" label={`${p.beds} BEDS`} />
+          <Spec icon="🛁" label={`${p.baths} BATHS`} />
+          <Spec icon="📏" label={`${p.sqft} SQ.FT.`} />
         </div>
       </div>
 
