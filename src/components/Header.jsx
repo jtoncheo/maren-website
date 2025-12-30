@@ -1,38 +1,37 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../assets/images/jmaren.png';
-import "./Header.css"
-
+import "./Header.css";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <header className="navbar">
-
-      <div class = "left-section">
-          <div className="navbar-logo">
-            <img src= {logo} alt="Logo" />
-          </div>
-          <span class = "location-text">HOUSTON,TX | info@jmaren.com</span>
+      <div className="left-section">
+        <div className="navbar-logo">
+          <img src={logo} alt="Logo" />
+        </div>
+        <span className="location-text">
+          HOUSTON, TX | info@jmaren.com
+        </span>
       </div>
-      {/* <div className="navbar-logo">
-        <img src= {logo} alt="Logo" />
-      </div> */}
 
-
-      <div className="burger" onClick={() => setMenuOpen(!menuOpen)}>
-        <span className={`bar ${menuOpen ? 'rotate1' : ''}`}></span>
-        <span className={`bar ${menuOpen ? 'fade' : ''}`}></span>
-        <span className={`bar ${menuOpen ? 'rotate2' : ''}`}></span>
-      </div>
+      {/* Hamburger OR X */}
+      <button
+        className="menu-button"
+        onClick={() => setMenuOpen(!menuOpen)}
+        aria-label={menuOpen ? "Close menu" : "Open menu"}
+      >
+        {menuOpen ? "✕" : "☰"}
+      </button>
 
       <nav className={`navbar-links ${menuOpen ? 'open' : ''}`}>
-        <Link to="/">Home</Link>
-        <Link to="/about">About</Link>
-        <Link to="/available-homes">Available Homes</Link>
-        <Link to="/past-projects">Past Projects</Link>
-        <Link to="/contact">Contact</Link>
+        <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
+        <Link to="/about" onClick={() => setMenuOpen(false)}>About</Link>
+        <Link to="/available-homes" onClick={() => setMenuOpen(false)}>Available Homes</Link>
+        <Link to="/past-projects" onClick={() => setMenuOpen(false)}>Past Projects</Link>
+        <Link to="/contact" onClick={() => setMenuOpen(false)}>Contact</Link>
       </nav>
     </header>
   );
