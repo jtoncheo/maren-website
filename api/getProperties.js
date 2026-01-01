@@ -3,10 +3,10 @@ import { google } from "googleapis";
 
 export default async function handler(req, res) {
   try {
-    // Parse service account JSON from Vercel environment
+    // Parse the Google service account JSON from environment
     const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
 
-    // Authenticate with Google
+    // Authenticate with Google Sheets
     const auth = new google.auth.GoogleAuth({
       credentials: serviceAccount,
       scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"],
@@ -14,8 +14,9 @@ export default async function handler(req, res) {
 
     const sheets = google.sheets({ version: "v4", auth });
 
-    const spreadsheetId = process.env.SHEET_ID; // Set this in Vercel
-    const range = "AvailableHomes!A2:M"; // Adjust if your sheet name is different
+    // Spreadsheet ID (server-side, keep secret)
+    const spreadsheetId = process.env.SHEET_ID;
+    const range = "AvailableHomes!A2:M"; // adjust if your sheet name/columns differ
 
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
@@ -24,7 +25,7 @@ export default async function handler(req, res) {
 
     const rows = response.data.values || [];
 
-    // Map rows to objects
+    // Map rows to structured property objects
     const properties = rows.map((row) => ({
       id: row[0],
       name: row[1],
@@ -43,7 +44,7 @@ export default async function handler(req, res) {
 
     res.status(200).json(properties);
   } catch (err) {
-    console.error(err);
+    console.error("Error fetching properties:", err);
     res.status(500).json({ error: "Failed to fetch properties" });
   }
 }

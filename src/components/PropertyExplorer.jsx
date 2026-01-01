@@ -5,6 +5,7 @@ import logo from "../assets/images/jmaren.png";
 
 const HEADER_OFFSET_PX = 80;
 
+// Currency formatter
 const $$ = (n) =>
   new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
 
@@ -12,16 +13,23 @@ export default function PropertyExplorer() {
   const [properties, setProperties] = useState([]);
   const [hoveredId, setHoveredId] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
-  // Fetch properties from Vercel serverless function
+  // Fetch properties from serverless function
   useEffect(() => {
     async function fetchProperties() {
       try {
         const res = await fetch("/api/getProperties");
+        if (!res.ok) throw new Error(`Server error: ${res.status}`);
         const data = await res.json();
         setProperties(data);
       } catch (err) {
         console.error("Failed to fetch properties:", err);
+        setError("Failed to load properties");
+      } finally {
+        setLoading(false);
       }
     }
     fetchProperties();
@@ -33,13 +41,12 @@ export default function PropertyExplorer() {
 
   const containerStyle = {
     paddingTop: HEADER_OFFSET_PX,
-    height: `100vh`,
+    height: "100vh",
     display: "flex",
     background: "#f9f1e4",
     color: "#333",
     boxSizing: "border-box",
   };
-
   const leftStyle = {
     width: 420,
     minWidth: 320,
@@ -54,14 +61,8 @@ export default function PropertyExplorer() {
   const mapStyle = { flex: 1, minWidth: 0, height: "100%" };
   const mapContainerStyle = { width: "100%", height: "100%" };
 
-  const getMarkerIcon = (isActive) =>
-    window.google
-      ? {
-          url: logo,
-          scaledSize: new window.google.maps.Size(isActive ? 50 : 40, isActive ? 50 : 40),
-          anchor: new window.google.maps.Point(isActive ? 25 : 20, isActive ? 25 : 20),
-        }
-      : null;
+  if (loading) return <p style={{ padding: 16 }}>Loading properties...</p>;
+  if (error) return <p style={{ padding: 16, color: "red" }}>{error}</p>;
 
   return (
     <div style={containerStyle}>
@@ -89,31 +90,35 @@ export default function PropertyExplorer() {
       </aside>
 
       <section style={mapStyle}>
-        <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
+        <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
           <GoogleMap
             mapContainerStyle={mapContainerStyle}
             center={focus ? { lat: focus.lat, lng: focus.lng } : { lat: 29.76, lng: -95.37 }}
             zoom={12}
+            onLoad={() => setMapLoaded(true)}
           >
-            {properties.map((p) => {
-              const isActive = p.id === (hoveredId ?? selectedId);
-              return (
-                <Marker
-                  key={p.id}
-                  position={{ lat: p.lat, lng: p.lng }}
-                  onMouseOver={() => setHoveredId(p.id)}
-                  onMouseOut={() => setHoveredId(null)}
-                  onClick={() => setSelectedId(p.id)}
-                  icon={getMarkerIcon(isActive)}
-                />
-              );
-            })}
+            {mapLoaded &&
+              properties.map((p) => {
+                const isActive = p.id === (hoveredId ?? selectedId);
+                const icon = {
+                  url: logo,
+                  scaledSize: new window.google.maps.Size(isActive ? 50 : 40, isActive ? 50 : 40),
+                  anchor: new window.google.maps.Point(isActive ? 25 : 20, isActive ? 25 : 20),
+                };
+                return (
+                  <Marker
+                    key={p.id}
+                    position={{ lat: p.lat, lng: p.lng }}
+                    onMouseOver={() => setHoveredId(p.id)}
+                    onMouseOut={() => setHoveredId(null)}
+                    onClick={() => setSelectedId(p.id)}
+                    icon={icon}
+                  />
+                );
+              })}
 
             {selected && (
-              <InfoWindow
-                position={{ lat: selected.lat, lng: selected.lng }}
-                onCloseClick={() => setSelectedId(null)}
-              >
+              <InfoWindow position={{ lat: selected.lat, lng: selected.lng }} onCloseClick={() => setSelectedId(null)}>
                 <div style={{ fontSize: 12 }}>
                   <div style={{ fontWeight: 600 }}>{selected.name}</div>
                   <div style={{ opacity: 0.8 }}>{selected.neighborhood}</div>
@@ -128,7 +133,7 @@ export default function PropertyExplorer() {
   );
 }
 
-/* Reuse your Card, Spec, and FakeSelect components as-is */
+// --- Reusable components ---
 function FakeSelect({ label }) {
   return (
     <div style={{ flex: 1 }}>

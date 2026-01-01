@@ -1,3 +1,5 @@
 maren-website/
 
 node_modules/
+.vercel
+.env*.local
