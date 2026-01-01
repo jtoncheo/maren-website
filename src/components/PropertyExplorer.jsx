@@ -80,7 +80,7 @@ export default function PropertyExplorer() {
 
       {/* RIGHT: Google Map */}
       <section style={mapStyle}>
-        <LoadScript googleMapsApiKey="AIzaSyABhHg6DvTFNv_gmyVBCTw49MTYR4cmqow">
+        <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY_HERE">
           <GoogleMap
             mapContainerStyle={mapContainerStyle}
             center={focus ? { lat: focus.lat, lng: focus.lng } : { lat: 29.76, lng: -95.37 }}
