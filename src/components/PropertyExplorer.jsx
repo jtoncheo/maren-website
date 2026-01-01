@@ -1,7 +1,6 @@
 // src/components/PropertyExplorer.jsx
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { GoogleMap, LoadScript, Marker, InfoWindow } from "@react-google-maps/api";
-import propertiesJson from "../data/properties.json";
 import logo from "../assets/images/jmaren.png";
 
 const HEADER_OFFSET_PX = 80;
@@ -10,16 +9,30 @@ const $$ = (n) =>
   new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
 
 export default function PropertyExplorer() {
-  const [properties] = useState(propertiesJson);
+  const [properties, setProperties] = useState([]);
   const [hoveredId, setHoveredId] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
+
+  // Fetch properties from Vercel serverless function
+  useEffect(() => {
+    async function fetchProperties() {
+      try {
+        const res = await fetch("/api/getProperties");
+        const data = await res.json();
+        setProperties(data);
+      } catch (err) {
+        console.error("Failed to fetch properties:", err);
+      }
+    }
+    fetchProperties();
+  }, []);
 
   const selected = useMemo(() => properties.find((p) => p.id === selectedId) || null, [selectedId, properties]);
   const hovered = useMemo(() => properties.find((p) => p.id === hoveredId) || null, [hoveredId, properties]);
   const focus = hovered ?? selected ?? null;
 
   const containerStyle = {
-    paddingTop: HEADER_OFFSET_PX, // space for fixed header
+    paddingTop: HEADER_OFFSET_PX,
     height: `100vh`,
     display: "flex",
     background: "#f9f1e4",
@@ -33,16 +46,14 @@ export default function PropertyExplorer() {
     maxWidth: 520,
     borderRight: "1px solid #e5ded1",
     background: "#ffffff",
-    paddingTop: 12, // optional spacing
-    height: `calc(100vh - ${HEADER_OFFSET_PX}px)`, // fits exactly under header
-    overflowY: "auto", // keeps scrolling inside sidebar
+    paddingTop: 12,
+    height: `calc(100vh - ${HEADER_OFFSET_PX}px)`,
+    overflowY: "auto",
   };
   const listStyle = { height: "100%", overflowY: "auto", padding: 16, display: "grid", gap: 16 };
   const mapStyle = { flex: 1, minWidth: 0, height: "100%" };
-
   const mapContainerStyle = { width: "100%", height: "100%" };
 
-  // Safe icon creator using window.google after API loads
   const getMarkerIcon = (isActive) =>
     window.google
       ? {
@@ -54,7 +65,6 @@ export default function PropertyExplorer() {
 
   return (
     <div style={containerStyle}>
-      {/* LEFT: Property cards */}
       <aside style={leftStyle}>
         <div style={{ padding: 12, display: "flex", gap: 12 }}>
           <FakeSelect label="All Current Projects" />
@@ -78,9 +88,8 @@ export default function PropertyExplorer() {
         </div>
       </aside>
 
-      {/* RIGHT: Google Map */}
       <section style={mapStyle}>
-        <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY_HERE">
+        <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
           <GoogleMap
             mapContainerStyle={mapContainerStyle}
             center={focus ? { lat: focus.lat, lng: focus.lng } : { lat: 29.76, lng: -95.37 }}
@@ -119,7 +128,7 @@ export default function PropertyExplorer() {
   );
 }
 
-/* Helper components */
+/* Reuse your Card, Spec, and FakeSelect components as-is */
 function FakeSelect({ label }) {
   return (
     <div style={{ flex: 1 }}>
