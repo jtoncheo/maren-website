@@ -5,6 +5,8 @@ const dbx = new Dropbox({ accessToken: process.env.DROPBOX_ACCESS_TOKEN });
 // App Folder access: "/" == Apps/<AppFolderName>
 const ROOT = "/completedProjects";
 
+console.log("TOKEN PRESENT?", !!process.env.DROPBOX_ACCESS_TOKEN);
+console.log("TOKEN PREFIX:", (process.env.DROPBOX_ACCESS_TOKEN || "").slice(0, 3));
 const isImage = (name) => /\.(jpe?g|png|webp|gif)$/i.test(name);
 const slugify = (s) =>
   s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -44,7 +46,19 @@ export default async function handler(req, res) {
     // Cache on Vercel edge/CDN for 2 min, allow stale while revalidating
     res.setHeader("Cache-Control", "s-maxage=120, stale-while-revalidate=600");
     res.status(200).json(albums);
-  } catch (e) {
-    res.status(500).json({ error: e?.message || "Failed to load albums" });
-  }
+  }  catch (e) {
+  const status = e?.status || e?.response?.status || 500;
+
+  const detail =
+    e?.error?.error_summary ||
+    e?.error?.error?.error_summary ||
+    e?.response?.data?.error_summary ||
+    e?.message ||
+    String(e);
+
+  console.error("DROPBOX STATUS:", status);
+  console.error("DROPBOX DETAIL:", detail);
+
+  return res.status(status).json({ error: detail });
+}
 }
