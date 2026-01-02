@@ -3,7 +3,7 @@ import { Dropbox } from "dropbox";
 const dbx = new Dropbox({ accessToken: process.env.DROPBOX_ACCESS_TOKEN });
 
 // App Folder access: "/" == Apps/<AppFolderName>
-const ROOT = "/currentProjects";
+const ROOT = "/completedProjects";
 
 const isImage = (name) => /\.(jpe?g|png|webp|gif)$/i.test(name);
 const slugify = (s) =>
