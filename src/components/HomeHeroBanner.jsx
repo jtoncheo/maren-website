@@ -1,23 +1,35 @@
-import {useEffect, useMemo, useState} from "react";
+import { useEffect, useMemo, useState } from "react";
+
+/**
+ * Auto-import every image in src/assets/images/HomeHeroBanner
+ * (adjust the path if this file moves)
+ */
+const bannerImageModules = import.meta.glob(
+  "../assets/images/HomeHeroBanner/*.{jpg,jpeg,png,webp}",
+  { eager: true }
+);
 
 export default function HomeHeroBanner({
- images = [],
+  images = [],
   headline = "JMaren",
   subhead = "Let us Build your homes",
   ctaText = "Learn More",
   ctaHref = "#learn-more",
 }) {
-  const safeImages = useMemo(
-    () =>
-      images.length
-        ? images
-        : [
-            "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=2400&q=70",
-            "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=2400&q=70",
-            "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=2400&q=70",
-          ],
-    [images]
-  );
+  const safeImages = useMemo(() => {
+    // If caller passes images, use them
+    if (images.length) return images;
+
+    // Otherwise use all images from the folder (sorted)
+    const fromFolder = Object.values(bannerImageModules)
+      .map((mod) => mod.default)
+      // keep 01.jpg, 02.jpg... order (works well if you name them 01,02,...)
+      .sort((a, b) => a.localeCompare(b));
+
+    // Fallback if folder is empty (prevents crashes)
+
+    return fromFolder;
+  }, [images]);
 
   const [active, setActive] = useState(0);
   const [next, setNext] = useState(1);
@@ -28,6 +40,8 @@ export default function HomeHeroBanner({
   const FADE = 900; // crossfade duration
 
   useEffect(() => {
+    if (safeImages.length < 2) return;
+
     const id = setInterval(() => {
       const newNext = (active + 1) % safeImages.length;
       setNext(newNext);
@@ -42,7 +56,7 @@ export default function HomeHeroBanner({
     }, DISPLAY);
 
     return () => clearInterval(id);
-  }, [active, safeImages.length]);
+  }, [active, safeImages, FADE, DISPLAY]);
 
   return (
     <section className="relative h-[72vh] min-h-[540px] w-full overflow-hidden">
@@ -56,6 +70,7 @@ export default function HomeHeroBanner({
           animationDuration: `${DISPLAY}ms`,
         }}
       />
+
       {/* Next layer */}
       <div
         className="absolute inset-0 hero-kenburns"

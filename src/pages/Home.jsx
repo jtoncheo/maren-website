@@ -25,17 +25,17 @@ export default function Home() {
         <HomeHeroBanner />
       </div>
 
-      <Section id="learn-more" eyebrow="Why this platform" title="Why Us?">
-        <p>Put your “Why” content here.</p>
+      <Section id="learn-more" eyebrow="Who are we" title="About">
+        <p>blah blah blah.</p>
       </Section>
 
-      <Section id="strategy" eyebrow="Investors" title="Unique Opportunity">
+      {/* <Section id="strategy" eyebrow="Buildings" title="Check out our Properties">
         <ul className="list-disc pl-5 space-y-2">
-          <li>Stable, in-demand asset class</li>
+          <li>house1</li>
           <li>Structural protections + diversification</li>
           <li>Tax-efficient, income-generating vehicle</li>
         </ul>
-      </Section>
+      </Section> */}
     </>
   );
 }
