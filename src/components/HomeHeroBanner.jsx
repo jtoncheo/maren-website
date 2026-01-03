@@ -1,9 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 
-/**
- * Auto-import every image in src/assets/images/HomeHeroBanner
- * (adjust the path if this file moves)
- */
 const bannerImageModules = import.meta.glob(
   "../assets/images/HomeHeroBanner/*.{jpg,jpeg,png,webp}",
   { eager: true }
@@ -17,55 +13,59 @@ export default function HomeHeroBanner({
   ctaHref = "#learn-more",
 }) {
   const safeImages = useMemo(() => {
-    // If caller passes images, use them
     if (images.length) return images;
 
-    // Otherwise use all images from the folder (sorted)
     const fromFolder = Object.values(bannerImageModules)
       .map((mod) => mod.default)
-      // keep 01.jpg, 02.jpg... order (works well if you name them 01,02,...)
+      // keep 01.jpg, 02.jpg... ordering
       .sort((a, b) => a.localeCompare(b));
 
-    // Fallback if folder is empty (prevents crashes)
-
-    return fromFolder;
+    return fromFolder.length
+      ? fromFolder
+      : [];
   }, [images]);
+
+  const DISPLAY = 6500; // total time per slide
+  const FADE = 900;     // crossfade time
 
   const [active, setActive] = useState(0);
   const [next, setNext] = useState(1);
-  const [showNext, setShowNext] = useState(false);
-
-  // Tune these to taste
-  const DISPLAY = 6500; // time each image is featured
-  const FADE = 900; // crossfade duration
+  const [isFading, setIsFading] = useState(false);
 
   useEffect(() => {
     if (safeImages.length < 2) return;
 
     const id = setInterval(() => {
-      const newNext = (active + 1) % safeImages.length;
-      setNext(newNext);
-      setShowNext(true);
+      const nextIndex = (active + 1) % safeImages.length;
+      setNext(nextIndex);
+      setIsFading(true);
 
       const t = setTimeout(() => {
-        setActive(newNext);
-        setShowNext(false);
+        setActive(nextIndex);
+        setIsFading(false);
       }, FADE);
 
       return () => clearTimeout(t);
     }, DISPLAY);
 
     return () => clearInterval(id);
-  }, [active, safeImages, FADE, DISPLAY]);
+  }, [active, safeImages.length]);
+
+  // Only ONE layer should zoom at a time:
+  // - During fade: zoom the incoming (next) image
+  // - Not fading: zoom the active image
+  const activeShouldZoom = !isFading;
+  const nextShouldZoom = isFading;
 
   return (
     <section className="relative h-[72vh] min-h-[540px] w-full overflow-hidden">
       {/* Active layer */}
       <div
-        className="absolute inset-0 hero-kenburns"
+        key={`active-${safeImages[active]}`}
+        className={`absolute inset-0 hero-slide ${activeShouldZoom ? "hero-zoom" : ""}`}
         style={{
           backgroundImage: `url(${safeImages[active]})`,
-          opacity: showNext ? 0 : 1,
+          opacity: isFading ? 0 : 1,
           transition: `opacity ${FADE}ms ease`,
           animationDuration: `${DISPLAY}ms`,
         }}
@@ -73,16 +73,17 @@ export default function HomeHeroBanner({
 
       {/* Next layer */}
       <div
-        className="absolute inset-0 hero-kenburns"
+        key={`next-${safeImages[next]}`}
+        className={`absolute inset-0 hero-slide ${nextShouldZoom ? "hero-zoom" : ""}`}
         style={{
           backgroundImage: `url(${safeImages[next]})`,
-          opacity: showNext ? 1 : 0,
+          opacity: isFading ? 1 : 0,
           transition: `opacity ${FADE}ms ease`,
           animationDuration: `${DISPLAY}ms`,
         }}
       />
 
-      {/* Dark overlay for readability */}
+      {/* Dark overlay */}
       <div className="absolute inset-0 bg-black/40" />
 
       {/* Content */}
@@ -104,18 +105,23 @@ export default function HomeHeroBanner({
       </div>
 
       <style>{`
-        .hero-kenburns{
+        .hero-slide{
           background-size: cover;
           background-position: center;
           will-change: transform, opacity;
-          transform: scale(1);
+          transform: scale(1); /* default: no zoom */
+        }
+
+        /* Only apply animation when this class is present */
+        .hero-zoom{
           animation-name: kenburns;
           animation-timing-function: ease-out;
           animation-fill-mode: forwards;
         }
+
         @keyframes kenburns {
           from { transform: scale(1); }
-          to { transform: scale(1.08); }
+          to   { transform: scale(1.08); }
         }
       `}</style>
     </section>
