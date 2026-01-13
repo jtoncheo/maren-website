@@ -131,13 +131,13 @@ export default function About() {
         </section>
 
         {/* CONTACT ANCHOR for your drawer link */}
-        <section id="contact" className="border-t border-black/10 py-16">
+        {/* <section id="contact" className="border-t border-black/10 py-16">
           <SectionTitle eyebrow="Get in touch" title="Contact" />
           <div className="max-w-6xl mx-auto px-6 mt-8">
             <p className="text-black/70 leading-relaxed">
               Add your contact form or email/phone here.
             </p>
-          </div>
+          </div> */}
         </section>
       </main>
     </>
