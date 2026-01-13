@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 const bannerImageModules = import.meta.glob(
-  "../assets/images/HomeHeroBanner/*.{jpg,jpeg,png,webp}",
+  "../assets/images/HomeHeroBanner/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP}",
   { eager: true }
 );
 
@@ -14,8 +14,8 @@ function getFolderImages() {
 export default function HomeHeroBanner({
   images = [],
   headline = "JMaren",
-  subhead = "Let us Build your homes",
-  ctaText = "Learn More",
+  subhead = "Building Luxury Homes in Urban Houston",
+  ctaText = "Houston,TX | Info@jmaren.com",
   ctaHref = "#learn-more",
 }) {
   const safeImages = useMemo(() => {
@@ -25,48 +25,38 @@ export default function HomeHeroBanner({
     return fromFolder.length
       ? fromFolder
       : [
-
+          "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=2400&q=70",
+          "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=2400&q=70",
         ];
   }, [images]);
 
   const DISPLAY = 6500;
   const FADE = 900;
 
-  // which slide index is currently showing
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  // which DOM layer is "on top" (0 or 1)
   const [topLayer, setTopLayer] = useState(0);
-
-  // each layer has its own background image url
   const [layerSrc, setLayerSrc] = useState(() => {
     const first = safeImages[0];
     const second = safeImages[1 % safeImages.length];
     return [first, second];
   });
-
-  // layer opacity
   const [layerOpacity, setLayerOpacity] = useState([1, 0]);
 
-  // animation control (we’ll restart animation cleanly)
   const layerRefs = [useRef(null), useRef(null)];
 
   const restartAnimation = (el) => {
     if (!el) return;
-    // remove animation
     el.style.animation = "none";
-    // force reflow so browser applies removal
+    // force reflow
     // eslint-disable-next-line no-unused-expressions
     el.offsetHeight;
-    // re-apply animation
     el.style.animation = `kenburns ${DISPLAY}ms ease-out forwards`;
   };
 
   useEffect(() => {
     if (safeImages.length < 2) return;
 
-    // initialize correct images if safeImages changes
-    setLayerSrc(([a, b]) => {
+    setLayerSrc(() => {
       const first = safeImages[0];
       const second = safeImages[1 % safeImages.length];
       return [first, second];
@@ -75,8 +65,7 @@ export default function HomeHeroBanner({
     setCurrentIndex(0);
     setTopLayer(0);
 
-    // start animating the visible layer
-    setTimeout(() => restartAnimation(layerRefs[0].current), 0);
+    requestAnimationFrame(() => restartAnimation(layerRefs[0].current));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [safeImages.length]);
 
@@ -86,24 +75,19 @@ export default function HomeHeroBanner({
     const interval = setInterval(() => {
       const nextIndex = (currentIndex + 1) % safeImages.length;
 
-      // determine which layer will fade IN (the hidden one)
       const incomingLayer = topLayer === 0 ? 1 : 0;
       const outgoingLayer = topLayer;
 
-      // set incoming background to the next image
       setLayerSrc((prev) => {
         const copy = [...prev];
         copy[incomingLayer] = safeImages[nextIndex];
         return copy;
       });
 
-      // restart animation on incoming layer BEFORE fade-in
-      // do it next tick so the new background is applied
       requestAnimationFrame(() => {
         restartAnimation(layerRefs[incomingLayer].current);
       });
 
-      // crossfade: incoming -> 1, outgoing -> 0
       setLayerOpacity((prev) => {
         const copy = [...prev];
         copy[incomingLayer] = 1;
@@ -111,13 +95,12 @@ export default function HomeHeroBanner({
         return copy;
       });
 
-      // after fade completes, incoming becomes top
       const t = setTimeout(() => {
         setTopLayer(incomingLayer);
         setCurrentIndex(nextIndex);
-        // outgoing layer is hidden now; no need to “stop” it (keeps last frame off-screen)
       }, FADE);
 
+      // clear timeout if something interrupts (strict mode / hot reload)
       return () => clearTimeout(t);
     }, DISPLAY);
 
@@ -125,7 +108,8 @@ export default function HomeHeroBanner({
   }, [currentIndex, safeImages, topLayer]);
 
   return (
-    <section className="relative h-[72vh] min-h-[540px] w-full overflow-hidden">
+    // ✅ FULL SCREEN HERO — no peeking next section
+    <section className="relative h-screen w-full overflow-hidden">
       {/* Layer 0 */}
       <div
         ref={layerRefs[0]}
@@ -148,22 +132,30 @@ export default function HomeHeroBanner({
         }}
       />
 
+      {/* Overlay */}
       <div className="absolute inset-0 bg-black/40" />
 
-      <div className="relative z-10 mx-auto max-w-6xl px-6 pt-28 text-white">
-        <h1 className="text-5xl md:text-7xl font-semibold tracking-tight">
-          {headline}
-        </h1>
-        <p className="mt-6 max-w-2xl text-lg md:text-xl text-white/90">
+      {/* Content (centered vertically) */}
+      <div className="relative z-10 mx-auto flex h-full max-w-6xl items-center px-6 text-white">
+        <div className="max-w-2xl">
+          <h1 className="font-brand text-5xl md:text-7xl tracking-tight">
+            {headline}
+          </h1>
+        <p className="font-brand mt-6 text-lg md:text-xl text-white/90">
           {subhead}
         </p>
 
-        <a
-          href={ctaHref}
-          className="mt-10 inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/10 px-6 py-3 text-sm font-medium backdrop-blur hover:bg-white/15"
-        >
-          {ctaText} <span aria-hidden>→</span>
-        </a>
+        <p className="font-brand mt-6 text-lg md:text-xl text-white/90">
+          {ctaText}
+        </p>
+
+          {/* <a
+            href={ctaHref}
+            className="mt-10 inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/10 px-6 py-3 text-sm font-medium backdrop-blur hover:bg-white/15"
+          >
+            {ctaText} <span aria-hidden>→</span>
+          </a> */}
+        </div>
       </div>
 
       <style>{`

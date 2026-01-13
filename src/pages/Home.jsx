@@ -1,5 +1,5 @@
 import HomeHeroBanner from "../components/HomeHeroBanner";
-
+import Navbar from "../components/Navbar";
 
 function Section({ id, eyebrow, title, children }) {
   return (
@@ -20,21 +20,15 @@ function Section({ id, eyebrow, title, children }) {
 export default function Home() {
   return (
     <>
-      {/* If Navbar should overlay hero, you can move Navbar into here and wrap with relative */}
-      <div className="relative">
-        <HomeHeroBanner />
-      </div>
+      {/* Fixed/transparent navbar overlays hero */}
+      <Navbar />
 
-      <Section id="learn-more" eyebrow="Who are we" title="About">
+      {/* Hero */}
+      <HomeHeroBanner />
+
+      {/* Next section will NOT show until scroll if hero uses h-screen */}
+      {/* <Section id="learn-more" eyebrow="Who are we" title="About">
         <p>blah blah blah.</p>
-      </Section>
-
-      {/* <Section id="strategy" eyebrow="Buildings" title="Check out our Properties">
-        <ul className="list-disc pl-5 space-y-2">
-          <li>house1</li>
-          <li>Structural protections + diversification</li>
-          <li>Tax-efficient, income-generating vehicle</li>
-        </ul>
       </Section> */}
     </>
   );
