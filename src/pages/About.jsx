@@ -137,8 +137,8 @@ export default function About() {
             <p className="text-black/70 leading-relaxed">
               Add your contact form or email/phone here.
             </p>
-          </div> */}
-        </section>
+          </div>
+        </section> */}
       </main>
     </>
   );
