@@ -60,11 +60,10 @@ export default function About() {
           <SectionTitle eyebrow="Our story" title="OUR STORY" />
           <div className="max-w-6xl mx-auto px-6 mt-8">
             <p className="max-w-4xl text-black/70 leading-relaxed">
-              J Maren Homes was founded in 2019 by Ruben Martinez, Gerrit Van
-              Someren, and Gavin Van Someren. The three principals pull on their
-              unique backgrounds in engineering, commercial development and
-              design, and corporate accounting to craft best in class, bespoke
-              homes in urban Houston.
+                Since its founding in 2019, J. Maren Homes has combined expertise in
+                engineering, design, and development to create bespoke, best-in-class homes in
+                urban Houston. Each home reflects a commitment to quality, innovation, and
+                lasting value.
             </p>
           </div>
         </section>
@@ -76,69 +75,53 @@ export default function About() {
           <div className="mt-10 space-y-12">
             <ValueBlock title="Relationships">
               <p>
-                Real estate development and construction is not a solo
-                enterprise. From purchasing a lot, to designing a floorplan, to
-                putting the finishing touches on the newly built home, we rely
-                on the contributions of a wide variety of skilled professionals
-                to achieve a beautiful, well constructed finished product.
-                Because of this, it is a core tenet of ours to ensure that we
-                are working with best in class professionals along every step of
-                the journey. We value all of these relationships as true
-                partnerships and fully believe that fostering these partnerships
-                leads to a higher quality of home built.
+                Real estate development and construction are not solo endeavors. From
+                purchasing a parcel and designing a floor plan to putting the finishing touches on
+                a newly built home, we rely on the expertise of a wide range of skilled
+                professionals to deliver a beautiful final product crafted with care and precision.
+                For this reason, we make it a core principle of our company to collaborate with
+                best-in-class professionals at every stage of the process, applying the highest
+                standards of craftsmanship and expertise to deliver homes of exceptional quality.
               </p>
               <p className="mt-4">
-                This mindset does not end once construction is finished either.
-                We look at new homeowners as our partners in the building
-                journey as well because without the relationship with you, there
-                is no reason to build a home. We take that relationship very
-                seriously and will stand behind our word throughout the home
-                building and buying process.
+                This mindset continues well beyond the completion of construction. Homeowners
+                are considered partners in the building journey, and that relationship is treated
+                with care and respect. We take this responsibility seriously and remain committed
+                to standing behind our word throughout the home-building and buying process.
               </p>
             </ValueBlock>
 
             <ValueBlock title="Excellence">
               <p>
-                We hold ourselves and our partners to high standards every day.
-                From communication standards to design to workmanship in each
-                home we build – our goal is always to strive for excellent work
-                product. There will always be mistakes made along the way, that
-                is the nature of construction, but we strive to proactively
-                address as many as we can and those that do occur, we address
-                quickly and with integrity. It is our goal that the home is
-                crafted with excellence both where you can and cannot see.
+                  We hold ourselves and our partners to high standards every day. From clear
+                  communication and thoughtful design to the quality of workmanship in every
+                  home we build, our goal is to consistently deliver excellent results. We take a
+                  proactive, detail-oriented approach throughout the construction process and
+                  address every aspect of the work with care and integrity. Above all, our aim is to
+                  craft homes with excellence in both the visible details and the work that happens
+                  behind the scenes.
               </p>
             </ValueBlock>
 
             <ValueBlock title="Creativity">
               <p>
-                In an everchanging landscape of tastes and technologies, we are
-                constantly focused on finding unique solutions to meet the
-                demands of modern living. It is our passion to pursue each new
-                home we build as a bespoke puzzle with the belief that we can
-                put together the pieces of each home in a way that is an
-                improvement on the last. We work diligently with our designers
-                on tweaking our floor plans and finishes, our energy consultants
-                on creating building envelopes that allow for efficient heating
-                and cooling in the harsh Houston weather, and our material
-                suppliers to make sure we stay on top of current trends in
-                building science and material. We do not allow ourselves to
-                settle into the status quo and pursue creative innovation across
-                the entire process of real estate development.
+                In an ever-changing landscape of evolving tastes and technologies, we remain
+                focused on finding thoughtful, innovative solutions that meet the demands of
+                modern living. We approach each new home as a bespoke puzzle, fueled by a
+                relentless drive to innovate and find creative solutions at every stage. We work
+                closely with our designers to refine floor plans and finishes, collaborate with
+                energy consultants to create building envelopes that support efficient heating and
+                cooling in Houston’s challenging climate, and partner with material suppliers to
+                stay current with advances in building science and materials. We do not allow
+                ourselves to settle into the status quo and instead pursue creative innovation
+                throughout every stage of the real estate development process.
               </p>
             </ValueBlock>
           </div>
         </section>
 
         {/* CONTACT ANCHOR for your drawer link */}
-        {/* <section id="contact" className="border-t border-black/10 py-16">
-          <SectionTitle eyebrow="Get in touch" title="Contact" />
-          <div className="max-w-6xl mx-auto px-6 mt-8">
-            <p className="text-black/70 leading-relaxed">
-              Add your contact form or email/phone here.
-            </p>
-          </div>
-        </section> */}
+
       </main>
     </>
   );

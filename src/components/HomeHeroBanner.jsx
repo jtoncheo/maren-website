@@ -13,10 +13,10 @@ function getFolderImages() {
 
 export default function HomeHeroBanner({
   images = [],
-  headline = "JMaren",
-  subhead = "Building Luxury Homes in Urban Houston",
-  ctaText = "Houston,TX | Info@jmaren.com",
-  ctaHref = "#learn-more",
+  headline = "J. Maren",
+  subhead = "Exceptional Homes, Exceptional Living",
+  ctaText = "Houston,TX | info@jmaren.com",
+  ctaHref = "#Contact Us",
 }) {
   const safeImages = useMemo(() => {
     if (images.length) return images;

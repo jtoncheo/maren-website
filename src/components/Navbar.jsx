@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import jmarenLogo from "../assets/images/jmaren.png";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -38,13 +39,28 @@ export default function Navbar() {
         ].join(" ")}
       >
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-          {/* Logo */}
-          <Link to="/" className="select-none text-white">
-            <div className="text-lg tracking-[0.35em] font-semibold">
-              JMAREN
-            </div>
-            <div className="text-[14px] tracking-[0.45em] text-white/70">
-              PROPERTIES
+          {/* Brand (logo + text) */}
+          <Link
+            to="/"
+            className="flex items-center gap-3 select-none text-white"
+            aria-label="JMaren Home"
+          >
+            <img
+              src={jmarenLogo}
+              alt="JMaren mark"
+              className="h-10 w-auto opacity-95 drop-shadow-sm"
+            />
+
+            <div className="leading-none">
+              {/* Big line */}
+              <div className="text-xl tracking-[0.28em] font-semibold">
+                J. MAREN
+              </div>
+
+              {/* Small line */}
+              <div className="mt-1 text-[12px] tracking-[0.45em] text-white/70">
+                HOMES
+              </div>
             </div>
           </Link>
 
@@ -53,6 +69,7 @@ export default function Navbar() {
             <button
               onClick={() => setOpen(true)}
               className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-md hover:bg-white/20 transition"
+              aria-label="Open menu"
             >
               <div className="space-y-1">
                 <div className="h-[2px] w-5 bg-white/90" />
@@ -65,6 +82,7 @@ export default function Navbar() {
           <button
             onClick={() => setOpen(true)}
             className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-md hover:bg-white/20 transition"
+            aria-label="Open menu"
           >
             <div className="space-y-1">
               <div className="h-[2px] w-5 bg-white/90" />
@@ -78,7 +96,9 @@ export default function Navbar() {
       <div
         className={[
           "fixed inset-0 z-[60] bg-black/40 transition-opacity duration-300",
-          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
+          open
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none",
         ].join(" ")}
         onClick={() => setOpen(false)}
       />
@@ -91,15 +111,17 @@ export default function Navbar() {
           "transition-transform duration-300 ease-out",
           open ? "translate-x-0" : "translate-x-full",
         ].join(" ")}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Site menu"
       >
         <div className="flex h-full flex-col p-6 text-white">
           <div className="flex items-center justify-between">
-            <div className="text-sm tracking-[0.35em] text-white/80">
-              MENU
-            </div>
+            <div className="text-sm tracking-[0.35em] text-white/80">MENU</div>
             <button
               className="rounded-full bg-white/10 px-3 py-2 text-sm hover:bg-white/15"
               onClick={() => setOpen(false)}
+              aria-label="Close menu"
             >
               ✕
             </button>
@@ -129,7 +151,7 @@ export default function Navbar() {
           </div>
 
           <div className="mt-auto pt-8 text-xs text-white/60">
-            © {new Date().getFullYear()} JMaren Properties
+            © {new Date().getFullYear()} JMaren Homes
           </div>
         </div>
       </aside>
