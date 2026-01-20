@@ -42,13 +42,13 @@ export default function Navbar() {
           {/* Brand (logo + text) */}
           <Link
             to="/"
-            className="flex items-center gap-3 select-none text-white"
+            className="flex items-start gap-3 select-none text-white"
             aria-label="JMaren Home"
           >
             <img
               src={jmarenLogo}
               alt="JMaren mark"
-              className="h-12 w-auto opacity-95 drop-shadow-sm"
+              className="h-12 w-auto opacity-95 drop-shadow-sm mt-[2px]"
             />
 
             <div className="leading-none">
